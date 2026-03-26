@@ -331,9 +331,6 @@ Regards, IRDDP Security Team
     except Exception as e:
         print(f"[OTP] ❌ Final failure for {email}: {str(e)}")
         return False
-    except Exception as e:
-        print(f"[OTP] ❌ {e}")
-        return False
 
 async def verify_recaptcha(token: str) -> float:
     if not RECAPTCHA_SECRET_KEY or RECAPTCHA_SECRET_KEY == "YOUR_RECAPTCHA_SECRET_HERE":
