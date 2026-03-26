@@ -4,6 +4,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import markerIcon   from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import { API_BASE } from "../config";
 
 L.Marker.prototype.options.icon = L.icon({
   iconUrl:    markerIcon,
@@ -29,12 +30,9 @@ export default function LocationPicker({ onLocationSelect }) {
 
   const verifyOnRoad = async (lat, lng) => {
     try {
-      // Queries OpenStreetMap to see if there is a 'highway' (road) within 30 meters of the pin
-      const query = `[out:json];way["highway"](around:30,${lat},${lng});out ids;`;
-      const res = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
+      const res = await fetch(`${API_BASE}/api/verify-road?lat=${lat}&lon=${lng}`);
       const data = await res.json();
       
-      // If elements array is empty, there are no mapped roads within 30 meters
       if (data.elements && data.elements.length === 0) {
         setGpsError("⚠ Warning: This pin is not near any known roads. Please drag the pin onto a valid road.");
         return false;
@@ -42,16 +40,13 @@ export default function LocationPicker({ onLocationSelect }) {
       return true;
     } catch (e) {
       console.error("Road verification failed:", e);
-      return true; // Failsafe: if the API is down, let them proceed anyway
+      return true; 
     }
   };
 
   const reverseGeocode = useCallback(async (lat, lng) => {
     try {
-      const res  = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
-        { headers: { "Accept-Language": "en", "User-Agent": "IRDDP-RoadDamage/1.0" } }
-      );
+      const res  = await fetch(`${API_BASE}/api/reverse-geocode?lat=${lat}&lon=${lng}`);
       const data = await res.json();
       if (data?.display_name) {
         setAddress(data.display_name);

@@ -75,6 +75,31 @@ app.add_middleware(
 os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
+# ─── Proxy Endpoints (CORS Bypass) ───────────────────────────────────
+@app.get("/api/reverse-geocode")
+async def proxy_reverse_geocode(lat: float, lon: float):
+    """Proxy for Nominatim to bypass CORS restrictions in browser."""
+    url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}"
+    headers = {"User-Agent": "IRDDP-Backend/1.0", "Accept-Language": "en"}
+    async with httpx.AsyncClient() as client:
+        try:
+            resp = await client.get(url, headers=headers, timeout=10.0)
+            return resp.json()
+        except Exception as e:
+            raise HTTPException(status_code=502, detail=f"Geocoding service error: {str(e)}")
+
+@app.get("/api/verify-road")
+async def proxy_verify_road(lat: float, lon: float):
+    """Proxy for Overpass API to verify if coordinates are on a road."""
+    query = f'[out:json];way["highway"](around:30,{lat},{lon});out ids;'
+    url = f"https://overpass-api.de/api/interpreter?data={query}"
+    async with httpx.AsyncClient() as client:
+        try:
+            resp = await client.get(url, timeout=15.0)
+            return resp.json()
+        except Exception as e:
+            raise HTTPException(status_code=502, detail=f"Road verification service error: {str(e)}")
+
 # ─── WebSocket Manager ────────────────────────────────────────────────
 class ConnectionManager:
     def __init__(self):
