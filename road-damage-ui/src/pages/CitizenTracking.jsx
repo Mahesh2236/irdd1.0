@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8000";
-const WS_BASE_URL  = "ws://localhost:8000";
+import { API_BASE, WS_BASE } from "../config";
+
+const API_BASE_URL = API_BASE;
+const WS_BASE_URL  = WS_BASE;
 
 const STEPS = [
   { label: "Reported",  status: "Pending" },

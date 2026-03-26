@@ -6,11 +6,13 @@ const PRIORITY_COLORS = {
   CLEAR:    { bg: "#eafaf1", border: "#27ae60", text: "#27ae60" },
 };
 
+import { API_BASE as CONFIG_API_BASE } from "../config";
+
 export function generateReportHTML({ batchReport, imageResults, citizen, location }) {
   const pKey = batchReport?.overall_priority || "CLEAR";
   const pCfg = PRIORITY_COLORS[pKey] || PRIORITY_COLORS["CLEAR"];
   const now = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
-  const API_BASE = "http://localhost:8000";
+  const API_BASE = CONFIG_API_BASE;
 
   const imageRowsHtml = imageResults.map((result, idx) => {
     const ir = result.image_report;

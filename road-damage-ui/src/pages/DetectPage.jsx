@@ -2,8 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import axios from "axios";
 import { printReportAsPDF } from "../utils/reportGenerator";
 import LocationPicker from "../components/LocationPicker";
-
-const API_BASE = "http://localhost:8000";
+import { API_BASE } from "../config";
 
 const PRIORITY_CONFIG = {
   LOW:      { color: "#1a6e35", bg: "#f0fff4", border: "#b7dfbf", icon: "👁️" },

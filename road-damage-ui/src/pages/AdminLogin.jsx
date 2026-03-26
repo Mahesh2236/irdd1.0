@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_BASE } from "../config";
 
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = API_BASE;
 
 export default function AdminLogin() {
   const [username, setUsername] = useState("");

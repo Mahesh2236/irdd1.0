@@ -4,8 +4,9 @@ import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { API_BASE } from "../config";
 
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = API_BASE;
 
 const STATUSES = ["Pending", "Under Review", "Repair Scheduled", "Resolved", "Rejected"];
 
