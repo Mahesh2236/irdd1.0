@@ -222,11 +222,21 @@ def validate_image_file(filename: str, contents: bytes):
 
 # ─── Email ────────────────────────────────────────────────────────────
 def _smtp_send(msg: EmailMessage):
-    server = smtplib.SMTP("smtp.gmail.com", 587)
-    server.ehlo(); server.starttls(); server.ehlo()
-    server.login(EMAIL_USER, EMAIL_PASS)
-    server.send_message(msg)
-    server.quit()
+    if not EMAIL_USER or not EMAIL_PASS:
+        print("[SMTP] ❌ EMAIL_USER or EMAIL_PASS not set in environment!")
+        raise Exception("SMTP credentials missing")
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=15)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login(EMAIL_USER, EMAIL_PASS)
+        server.send_message(msg)
+        server.quit()
+        print(f"[SMTP] ✅ Email sent to {msg['To']}")
+    except Exception as e:
+        print(f"[SMTP] ❌ Failed to send email to {msg['To']}: {str(e)}")
+        raise e
 
 def send_email_task(citizen_name, citizen_email, report_id,
                     total_potholes, worst_severity, overall_priority,
@@ -304,6 +314,7 @@ IRDDP System — VI Semester CSE Capstone
         print(f"[Email] ❌ {e}")
 
 def send_otp_email(email: str, otp: str) -> bool:
+    print(f"[OTP] Attempting to send code to {email}...")
     msg = EmailMessage()
     msg["Subject"] = f"Your IRDDP Verification Code: {otp}"
     msg["From"]    = EMAIL_USER
@@ -316,8 +327,10 @@ Regards, IRDDP Security Team
 """)
     try:
         _smtp_send(msg)
-        print(f"[OTP] ✅ Sent to {email}")
         return True
+    except Exception as e:
+        print(f"[OTP] ❌ Final failure for {email}: {str(e)}")
+        return False
     except Exception as e:
         print(f"[OTP] ❌ {e}")
         return False
