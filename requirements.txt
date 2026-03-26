@@ -56,9 +56,6 @@ ultralytics==8.4.19
 ultralytics-thop==2.0.18
 urllib3==2.6.3
 watchdog==6.0.0
-torch
-torchvision
-torchaudio
 slowapi==0.1.9
 httpx==0.27.0
 python-dotenv==1.0.1
